@@ -93,10 +93,10 @@ function showUrlInWebview(context: vscode.ExtensionContext, url: string) {
     // 设置 Webview 的 HTML 内容
     panel.webview.html = htmlContent;
 
-	panel.webview.onDidReceiveMessage(
+	panel.webview.onDidReceiveMessage( // 页面始终在等待接受checkall信息，只要一点击，即可触发
 		(message) => {
 			switch (message.command) {
-				case 'alert':
+				case 'checkall':
 					vscode.window.showInformationMessage(message.text);
 					break;
 			}
@@ -104,6 +104,30 @@ function showUrlInWebview(context: vscode.ExtensionContext, url: string) {
 		undefined,
 		context.subscriptions
 	);
+
+	panel.webview.onDidReceiveMessage(async (message) => { // 没有捆绑点击事件，
+		if (message.command === 'fetchHealthData') {
+			const apiUrls = [
+				['https://stg.mercury.rendering.360.autodesk.com/health', 'healthTable_cos_stg', "tableBody_cos_stg"],
+				['https://mercury.rendering.360.autodesk.com/health', 'healthTable_cos_prd', "tableBody_cos_prd"],
+				['https://stg.mercury.rendering.360.irl.autodesk.com/health', 'healthTable_emea_stg', "tableBody_emea_stg"],
+				['https://mercury.rendering.360.irl.autodesk.com/health', 'healthTable_emea_prd', "tableBody_emea_prd"]
+			];
+
+			for (const [apiUrl, tablename, tablebodyname] of apiUrls) {
+				try {
+					const response = await fetch(apiUrl);
+					const xmlText = await response.text();
+					console.log(tablename);
+					panel.webview.postMessage({ command: 'displayData', data: xmlText, tablename, tablebodyname });
+				} catch (error) {
+					console.error('请求失败:', error);
+					const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
+					panel.webview.postMessage({ command: 'error', message: errorMessage });
+				}
+			}
+		}
+	});
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -118,7 +142,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 
-    const checkall = vscode.commands.registerCommand('healthcheck.checkall', (url: string) => {
+    const checkall = vscode.commands.registerCommand('healthcheck.checkall', (url: string) => { // 添加一个web view 
 		showUrlInWebview(context, url);
 	})
 }

@@ -8,10 +8,46 @@
     <link rel="icon" href="{{iconUri}}">
 </head>
 <body>
-    <img src="{{iconUri}}" alt="Icon" width="32" height="32">
-    <h2>URL: {{url}}</h2>
-    <p>点击链接访问：<a href="{{url}}" target="_blank">{{url}}</a></p>
     <button id="alertButton">点击我</button>
+
+    <h2>Health Check 信息：stg cosv3</h2>
+    <div id="loading">正在加载中...</div>
+    <table id="healthTable_cos_stg" style="display: none;">
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody_cos_stg"></tbody>
+    </table>
+    <table id="healthTable_cos_prd" style="display: none;">
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody_cos_prd"></tbody>
+    </table>
+    <table id="healthTable_emea_stg" style="display: none;">
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody_emea_stg"></tbody>
+    </table>
+    <table id="healthTable_emea_prd" style="display: none;">
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Content</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody_emea_prd"></tbody>
+    </table>
 
     <script src="{{scriptUri}}"></script>
 </body>
